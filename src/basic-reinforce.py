@@ -5,22 +5,20 @@ import torch.optim as optim
 
 from src.agent.policy import Policy
 
-GAMMA = 0.99
-
+MAX_EPISODES = 300
+MAX_TRAJECTORY = 200
 
 def main():
   env = gym.make('CartPole-v0')
-
-  # input dimensions:
   policy = Policy(env.observation_space.shape[0], env.action_space.n)
   optimizer = optim.Adam(policy.parameters(), lr=0.01)
 
-  for episode in range(300):
+  for episode in range(MAX_EPISODES):
     obs, _ = env.reset()
     state = torch.from_numpy(obs)
 
     # simulate the current episode
-    for t in range(200):
+    for t in range(MAX_TRAJECTORY):
       action = policy.act(state)
       obs, reward, terminated, _, _ = env.step(action)
       state = torch.from_numpy(obs)
