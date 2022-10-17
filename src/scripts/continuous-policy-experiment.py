@@ -2,23 +2,22 @@ import gym
 import torch
 import torch.optim as optim
 
-from src.agent.policy import Policy
+from src.agent.continuous_policy import ContinuousPolicy
 
 MAX_EPISODES = 300
-MAX_TRAJECTORY = 200
+MAX_TRAJECTORY = 1000
 
 def main():
-  env = gym.make('CartPole-v0')
-  policy = Policy(env.observation_space.shape[0], env.action_space.n)
+  env = gym.make('Pendulum-v1')
+  policy = ContinuousPolicy(env.observation_space.shape[0])
   optimizer = optim.Adam(policy.parameters(), lr=0.01)
 
   for episode in range(MAX_EPISODES):
     obs, _ = env.reset()
     state = torch.from_numpy(obs)
-    terminated = False
 
     # simulate the current episode
-    while not terminated:
+    for t in range(MAX_TRAJECTORY):
       action = policy.act(state)
       obs, reward, terminated, _, _ = env.step(action)
       state = torch.from_numpy(obs)

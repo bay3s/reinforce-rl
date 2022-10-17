@@ -1,61 +1,51 @@
 import torch
 import torch.nn as nn
-from torch.distributions import Categorical
-import torch.optim as optim
+from torch.distributions import Normal
 import numpy as np
+import torch.optim as optim
 
 
-GAMMA = 0.99
+class ContinuousPolicy(nn.Module):
 
-
-class Policy(nn.Module):
-
-  def __init__(self, in_features, out_features):
+  def __init__(self, in_features: int, learning_rate: float = 0.99):
     super().__init__()
 
     layers = [
       nn.Linear(in_features=in_features, out_features=64, bias=True),
       nn.ReLU(),
-      nn.Linear(64, out_features=out_features, bias=True)
+      # using the out features in this case to gauge the mean & scale of the normal distribution to sample.
+      nn.Linear(64, out_features=2, bias=True)
     ]
 
-    self.model = nn.Sequential(*layers)
+    self.learning_rate = learning_rate
+    self.network = nn.Sequential(*layers)
     self.log_probabilities = list()
     self.rewards = list()
 
   def forward(self, state: torch.Tensor):
-    return self.model(state)
-
-  def on_policy_reset(self):
-    self.log_probabilities = list()
-    self.rewards = list()
+    return self.network(state)
 
   def act(self, state: torch.Tensor) -> int:
     """
     Take an action based on the state of the environment given to the agent.
-
-    PyTorch provides parameterizable probability distributions and sampling functions.
-    
-    https://pytorch.org/docs/stable/distributions.html
-    
-    "Gradient Estimation Using Stochastic Computation Graphs", Abbeel et al. https://arxiv.org/abs/1506.05254
-    
-    - In a variety of ML problems, the loss function is defined as an expectation over a collection of random variables.
-    - Estimating the gradient of the loss function, using samples lies at the core of gradient-based learning algorithms
-      for such problems.
 
     :param state: State of the environment for the agent.
 
     :return: int
     """
     pd_parameters = self.forward(state)
-    pd = Categorical(logits=pd_parameters) # probability distribution
+    pd = Normal(loc=pd_parameters[0], scale=2)
+
     action = pd.sample() # pi(a|s)
 
     log_prob = pd.log_prob(action) # log probability of pi(a|s)
     self.log_probabilities.append(log_prob) # store these for training
 
-    return action.item()
+    return [action]
+
+  def on_policy_reset(self):
+    self.log_probabilities = list()
+    self.rewards = list()
 
   def compute_loss(self) -> torch.Tensor:
     """
@@ -69,7 +59,7 @@ class Policy(nn.Module):
 
     # compute discounted returns for each timestep
     for t in reversed(range(trajectory_length)):
-      future_returns = self.rewards[t] + GAMMA * future_returns
+      future_returns = self.rewards[t] + self.learning_rate * future_returns
       returns[t] = future_returns
 
     # log probabilities
