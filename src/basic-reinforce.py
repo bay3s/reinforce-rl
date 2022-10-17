@@ -1,4 +1,3 @@
-import numpy as np
 import gym
 import torch
 import torch.optim as optim
@@ -16,9 +15,10 @@ def main():
   for episode in range(MAX_EPISODES):
     obs, _ = env.reset()
     state = torch.from_numpy(obs)
+    terminated = False
 
     # simulate the current episode
-    for t in range(MAX_TRAJECTORY):
+    while not terminated:
       action = policy.act(state)
       obs, reward, terminated, _, _ = env.step(action)
       state = torch.from_numpy(obs)
@@ -27,13 +27,13 @@ def main():
       if terminated:
         break
 
-    loss = policy.train(optimizer)
+    loss = policy.train_agent(optimizer)
     total_reward = sum(policy.rewards)
 
     solved = total_reward > 195.0
     policy.on_policy_reset()
 
-    print(f'Episode {episode}, STEP: {t}, Loss: {loss}, Total Reward: {total_reward}, Solved: {solved}.')
+    print(f'Episode {episode}, Loss: {loss}, Total Reward: {total_reward}, Solved: {solved}.')
 
     if solved:
       break
