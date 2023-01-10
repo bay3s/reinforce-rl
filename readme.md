@@ -33,7 +33,9 @@ $$J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta} \left[R(\tau)\right]$$
 
 #### Policy Gradient $\triangledown_\theta \space J(\pi_\theta)$
 - The policy gradient serves to maximize the "objective" (expected return over completed trajectories), solving the following problem:
+
 $$\max_\theta \space J(\pi_\theta) = \mathbb{E}_{\tau \sim \pi_\theta}[R(\tau)]$$
+
 - We perform gradient ascent on the policy parameters in order to do achieve this:
 $$\theta \leftarrow \theta + \alpha \triangledown_\theta  J(\pi_\theta)$$
 - The policy gradient $\triangledown_\theta \space J(\pi_\theta)$ is given by:
