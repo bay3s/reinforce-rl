@@ -23,7 +23,7 @@ def compute_loss(policy: nn.Module, optimizer: torch.optim, discount_factor: flo
     returns[t] = future_ret
     pass
 
-  loss = torch.sum(-torch.stack(policy.log_probabilities) * torch.tensor(returns))
+  loss = -torch.sum(torch.stack(policy.log_probabilities) * torch.tensor(returns))
   optimizer.zero_grad()
   loss.backward()
   optimizer.step()

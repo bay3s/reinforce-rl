@@ -27,6 +27,13 @@ class DiscretePolicy(nn.Module):
     pass
 
   def forward(self, state: torch.Tensor):
+    """
+    Forward pass through the neural net.
+
+    :param state: The current state of the environment.
+
+    :return: torch.Tensor
+    """
     return self.model(state)
 
   def act(self, state: torch.Tensor) -> int:
