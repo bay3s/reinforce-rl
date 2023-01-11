@@ -62,8 +62,8 @@ class ContinuousPolicy(nn.Module):
     log_prob = normal.log_prob(action)
     self.log_probabilities.append(log_prob)
 
-    # squeeze action to -2, 2 for the InvertedPendulum environment.
-    action = torch.clamp(action, min = -2, max = 2)
+    # squeeze action
+    action = torch.tanh(action)
 
     return action.detach().numpy()
 
