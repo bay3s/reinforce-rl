@@ -3,8 +3,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 from torch.distributions import Normal
 
-
-class ContinuousPolicy(nn.Module):
+class InvertedPendulumPolicy(nn.Module):
 
   DEFAULT_HIDDEN_SIZES = [256, 256]
 
