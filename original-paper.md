@@ -9,10 +9,10 @@
 **Intro**
 
 *Basics*
-- Associate taks are ones where the learner is required to perform an input-output mapping - an exception to this is that of immediate refinrocement where the payooff is determined by the most recent input-output pair alone.
+- Associative taks are ones where the learner is required to perform an input-output mapping - an exception to this is that of immediate refinrocement where the payooff is determined by the most recent input-output pair alone.
 - Algorithms presented do not explicitly compute the gradient estimate or store information from which gradient estimates may be computed.
 - Experiments adopt a connectionist perspective, but should be noted that analysis can be applied to other ways of implementing input-output mappings.
-- A connectionist perspective is adopted here - basically that implies that the learning agent is a feedforward network.
+- A connectionist perspective basically means that the learning agent is a feedforward network.
 	- The network operates by receiving input and propagating the corresponding activity through the net which is sent to the environment for "evaluation".
 	- The evaluation is given in the form of reinforcement signal, a scalar reward r.
 
@@ -21,7 +21,7 @@
 - $y^i$ is the output of the network unit i
 - $w^i$ is the set of all weights on which the functioning of the unit i depends
 - $W$ is the weight matrix
-- $g^i(\xi, w^i, x^i) = Pr\{y_i = \xi | W, x^i\}$ so that $g^i$ is the probability mass function determining the value of $y_i$ as a function of the parameters and its input.
+- $g^i(\xi, w^i, x^i) = Pr(y_i = \xi | W, x^i)$ so that $g^i$ is the probability mass function determining the value of $y_i$ as a function of the parameters and its input.
 - A stochastic semilinear unit is defined as one whose ouput is drawn from a probability distributin whose mass function has a single parameter $p_i$ computed as $p_i = f_i(s_i)$.
 	- $f_i$ is a differentiable squashing function (in the context of this paper a sigmoid)
 	- $s_i = w^{iT}x^i = \sum_j w_{ij}x_j$
@@ -30,14 +30,14 @@
 
 *Expected Reinforcement Performance Criterion*
 - For gradient learning algorithms, we need a performance measure to optimize.
-- A natural one for immediate-RL problems is the expected value of rewards conditioned on a particular choice of parameters $E\{r|W\}$.
+- A natural one for immediate-RL problems is the expected value of rewards conditioned on a particular choice of parameters $E(r|W)$.
 - Expected values are used because of randomness in:
 	- inputs to the network
 	- output corresponding to a specific input
 	- reward for a particular input-output
-- Makes sense to discuss $E\{r|W\}$ independent of time only in cases where inputs & rewards are time independent - assumption is that inputs & rewards come from stationary distributions.
-- Based on the assumptions made, $E\{r|W\}$ is a well-defined deterministic funciton of W.
-- In this formulation, objective of the RL system is to search the space of possible weights which maximizes $E\{r|W\}$
+- Makes sense to discuss $E(r|W)$ independent of time only in cases where inputs & rewards are time independent - assumption is that inputs & rewards come from stationary distributions.
+- Based on the assumptions made, $E(r|W)$ is a well-defined deterministic funciton of W.
+- In this formulation, objective of the RL system is to search the space of possible weights which maximizes $E(r|W)$
 
 
 **REINFORCE Algorithms**
@@ -54,21 +54,24 @@ $$\triangle w_{ij} = \alpha_{ij}(r - b_{ij})e_{ij}$$
 - REINFORCE stands for "Reward Increment = Non-negative Factor x Offset Reinforcement x Characteristic Eligibility"
 
 *Theorem 1.* Says that for any REINFORCE algorithm the average update vector in weight space lies ina  direction for which this performance measure is increasing.
-- The inner product of $E\{\triangle W|W\}$ and $\triangledown_W E\{r|W\}$ is non-negative.
-- If $\alpha_{ij} > 0$ for all i and j, then this inner product is zero only when $\triangledown_W E\{r|W\} = 0$
-- If $\alpha_{ij}$ is independent of i and j, then $E\{\triangle W|W\} = \alpha \triangledown_w E\{r|W\}$
-- For each weight $w_{ij}$ the quantity $(r - b_{ij}) \partial ln g_i / \partial w_{ij}$ is an unbiased estimate of $\partial E\{r|W\} / \partial w_{ij}$
+- The inner product of $E(\triangle W|W)$ and $\triangledown_W E(r|W)$ is non-negative.
+- If $\alpha_{ij} > 0$ for all i and j, then this inner product is zero only when $\triangledown_W E(r|W) = 0$
+- If $\alpha_{ij}$ is independent of i and j, then $E(\triangle W|W) = \alpha \triangledown_w E(r|W)$
+- For each weight $w_{ij}$ the quantity $(r - b_{ij}) \partial ln g_i / \partial w_{ij}$ is an unbiased estimate of $\partial E(r|W) / \partial w_{ij}$
 
 *Epsiodic Reinforcement*
 - REINFORCE extended to learning problems having a temporal credit-assignment component.
 - Assume a net N is trained on a episode-by-episode basis where each episode consists of k ime steps.
 - Single reinforcement r value is provided to the net at the end of each episode.
 - At the conclusion of each episode each weight $w_{ij}$ is incremented by:
-$$\triangle w_{ij} = \alpha_{ij} (r - b_{ij}) \sum_{t = 1}^k e_{ij}(t)$$
+$$\triangle w_{ij} = \alpha_{ij} (r - b_{ij}) \sum^k_{t = 1} e_{ij}(t)$$
 - where $e_{ij}(t)$ represents the notion of characteristic eligibility for $w_{ij}$ evaluated at time t.
 
 A more general formulation of episodic learning involves reinforcement delivered at each time step during the episode. 
-- The appropriate performance measure is $E\{\sum_{t=1}^k r(t) |W\}$
+- The appropriate performance measure is
+
+$$E(\sum_{t=1}^kr(t) |W)$$
+
 - A statistical gradient-following algorithm for this case is
 $$\triangle w_{ij} = \alpha_{ij}(\sum_{t=1}^kr - b_{ij}) \sum_{t=1}^k e_{ij}(t) $$
 
@@ -99,12 +102,12 @@ $$\triangle \sigma = \alpha_\sigma (r - b_\sigma) \frac{(y - \mu)^2 - \sigma^2}{
 
 *Networks Using Deterministic Hidden Units*
 - Let x denote the vector of network input and y denote the network output vector.
-- We can define $g(\xi, W, x) = Pr\{y = \xi | W, x\}$ the be overall probability mass function describing the input-output behavior of the entire network.
+- We can define $g(\xi, W, x) = Pr(y = \xi | W, x)$ the be overall probability mass function describing the input-output behavior of the entire network.
 - Output O of the network is vector-valued and - because fo randomness in the ouput and because randomness is independent across untis we have:
 
 
-$$\begin{aligned}Pr\{y = \xi | W, x\} &= \prod_{k \in O} Pr\{y_k = \xi_k |W, x\}  \\
-&= \prod_{k \in O} Pr\{y_k = \xi_k |w^k, x^k\}\end{aligned}$$
+$$\begin{aligned}Pr(y = \xi | W, x) &= \prod_{k \in O} Pr(y_k = \xi_k |W, x)  \\
+&= \prod_{k \in O} Pr(y_k = \xi_k |w^k, x^k)\end{aligned}$$
 
 - Taking the natural logs we get
 
@@ -119,10 +122,10 @@ $$\frac{\partial ln \space g}{\partial w_{ij}} (\xi, W, x) = \sum_{k \in O} \fra
 - Suppose that it were possible to "backpropagate through a random number generator".
 - Consider a stochastic semilinear unit and a function J having some deterministic dependence on the $y_i$ (the output of the unit).
 	- $y_i$ is sampled from a random number generator parameterized by $p_i$.
-	- Example of this is when the unit is an output and $J = E\{r|W\}$ with reinforcement depending on whether the output is correct.
+	- Example of this is when the unit is an output and $J = E(r|W)$ with reinforcement depending on whether the output is correct.
 - We would like to be able to compute $\partial J / \partial p_i$ based on knowledge of $\partial J / \partial y_i$.
 - But - we could not expect there to be a deterministic relationship between these quantities due to the randomness.
-- A more reasonable property to look for is $\partial E\{J|p_i\}/\partial p_i$ but that fails to hold in general as well.
+- A more reasonable property to look for is $\partial E(J|p_i)/\partial p_i$ but that fails to hold in general as well.
 - However, if the output of the random nuber generator can be written as a differentiable function of its parameters the approach descibed for backpropagating through deterministic computation can be applied.
 
 *Example: Backprop thorugh random number generator*
