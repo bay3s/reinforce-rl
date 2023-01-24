@@ -1,5 +1,4 @@
 #### Intro
-- Invented in 1992 in the paper "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning".
 - REINFORCE has a fairly simple interpretation - increases the probability of actions along positive reward trajectories and decreases the actions along the trajectories with low rewards.
 	- If learning is successful, over the course of many iterations, the policy should shift to distribution that results in good performance in an environment.
 - Action probabilities are changed by following the policy gradient, so REINFORCE is known as a policy gradient algorithm.
@@ -14,6 +13,7 @@
 	- Actor-Critic which is a variation of policy gradient algorithms does care.
 - REINFORCE also does not care about the markov assumption.
 - REINFORCE is an on-policy algorithm and can be used for discrete and continuous environment.
+- Additional notes on the original paper "Gradient-Following Algorithms for Connectionist RL (Williams, 1992)" can be found <a href="https://github.com/bay3s/reinforce-rl/blob/main/original-paper.md">here</a>.
 
 
 #### Policy $\pi_\theta$
